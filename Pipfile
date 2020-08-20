@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+# See https://github.com/pypa/pipenv/issues/1760
+black = "==19.10b0"
+flake8 = "*"
+pytest = "*"
+
+[packages]
+Jinja2 = "*"
+requests = "*"
+
+[requires]
+python_version = "3"
