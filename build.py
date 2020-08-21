@@ -53,11 +53,11 @@ def debug_function_name(args, name):
 def process_header_footer_data(args, data_full):
     data_path = copy.deepcopy(data_full)
     info = [["ID", "Title", "Uniform Resource Locator (URL)"]]
+    prefix = f"https://{args.domain}"
     for index, header in enumerate(data_full):
         id_ = header["ID"]
         title = header["title"]
         url_full = header["url"]
-        prefix = f"https://{args.domain}"
         url_path = remove_prefix(copy.copy(url_full), prefix)
         data_path[index]["url"] = url_path
         info_url = url_full
@@ -65,14 +65,16 @@ def process_header_footer_data(args, data_full):
             info_url = f"{C_GRAY}https://{args.domain}{C_RESET}{url_path}"
         info.append([id_, title, info_url])
     debug_info(args, info)
+    data_full = {"prefix": prefix, "json": data_full}
+    data_path = {"prefix": "", "json": data_path}
     return data_full, data_path
 
 
 def process_scripts_styles_data(args, data_full):
     data_path = copy.deepcopy(data_full)
     info = [["ID", "Uniform Resource Locator (URL)"]]
+    prefix = f"https://{args.domain}"
     for id_, url_full in data_full.items():
-        prefix = f"https://{args.domain}"
         url_path = remove_prefix(copy.copy(url_full), prefix)
         data_path[id_] = url_path
         info_url = url_full
@@ -80,6 +82,8 @@ def process_scripts_styles_data(args, data_full):
             info_url = f"{C_GRAY}https://{args.domain}{C_RESET}{url_path}"
         info.append([id_, info_url])
     debug_info(args, info)
+    data_full = {"prefix": prefix, "json": data_full}
+    data_path = {"prefix": "", "json": data_path}
     return data_full, data_path
 
 

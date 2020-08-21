@@ -1,4 +1,4 @@
 {# vim: expandtab shiftwidth=2 tabstop=2 -#}
-{% for id_, url in data.items() -%}
+{% for id_, url in data["json"].items() -%}
 <link rel="stylesheet" id="{{ id_ }}" href="{{ url }}" type="text/css" media="all"/>
 {% endfor -%}

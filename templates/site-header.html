@@ -1,11 +1,12 @@
 {# vim: expandtab shiftwidth=2 tabstop=2 -#}
+{% set PREFIX = data["prefix"] -%}
 <header class="main-header">
   <div class="container">
     <nav class="navbar">
       <div class="navbar-brand">
-        <a href="/" class="has-text-black">
+        <a href="{{ PREFIX }}/" class="has-text-black">
           <svg class="logo" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidyMid meet" viewBox="0 0 304 73">
-            <use href="/wp-content/themes/wp-theme-base/assets/img/logos/cc/logomark.svg#logomark"></use>
+            <use href="{{ PREFIX }}/wp-content/themes/wp-theme-base/assets/img/logos/cc/logomark.svg#logomark"></use>
           </svg>
         </a>
         <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">

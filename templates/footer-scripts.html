@@ -1,4 +1,4 @@
 {# vim: expandtab shiftwidth=2 tabstop=2 -#}
-{% for id_, url in data.items() -%}
+{% for id_, url in data["json"].items() -%}
 <script type="text/javascript" src="{{ url }}" id="{{ id_ }}"></script>
 {% endfor -%}
