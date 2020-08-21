@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # vim: set fileencoding=utf-8:
 
-"""Fetch Legalcode includes (sripts, styles, navigation header, and navigation
-footer)
+"""
+Build creativecommons.org primary site includes (scripts, styles, navigation
+header, and navigation footer) based on WordPress REST API
 """
 
 # Standard library

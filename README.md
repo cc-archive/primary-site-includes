@@ -1,6 +1,7 @@
 # primary-site-includes
 
-Builds primary site (creativecommons.org) includes based on WordPress REST API
+Build creativecommons.org primary site includes (scripts, styles, navigation
+header, and navigation footer) based on WordPress REST API
 
 
 ## Code of Conduct
