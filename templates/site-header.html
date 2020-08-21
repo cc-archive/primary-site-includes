@@ -17,7 +17,7 @@
       <div class="navbar-menu">
         <div id="primary-menu" class="navbar-end">
         {%- for header in data %}
-          <a class='navbar-item {{ header['ID'] }} menu-item menu-item-type-post_type menu-item-object-page menu-item-{{ header['ID'] }}' href='{{ header['url'] }}'>{{ header['title'] }}</a>
+          <a class='navbar-item {{ header["ID"] }} menu-item menu-item-type-post_type menu-item-object-page menu-item-{{ header["ID"] }}' href='{{ header["url"] }}'>{{ header["title"] }}</a>
         {%- endfor %}
         </div>
       </div>
