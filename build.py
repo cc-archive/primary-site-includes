@@ -7,7 +7,6 @@ header, and navigation footer) based on WordPress REST API
 """
 
 # Standard library
-from pprint import pprint
 import argparse
 import copy
 import os
@@ -51,10 +50,81 @@ def debug_function_name(args, name):
         print(f"{C_WHITE}## {name}{C_RESET}")
 
 
+def process_header_footer_data(args, data_full):
+    data_path = copy.deepcopy(data_full)
+    info = [["ID", "Title", "Uniform Resource Locator (URL)"]]
+    for index, header in enumerate(data_full):
+        id_ = header["ID"]
+        title = header["title"]
+        url_full = header["url"]
+        prefix = f"https://{args.domain}"
+        url_path = remove_prefix(copy.copy(url_full), prefix)
+        data_path[index]["url"] = url_path
+        info_url = url_full
+        if url_full != url_path:
+            info_url = f"{C_GRAY}https://{args.domain}{C_RESET}{url_path}"
+        info.append([id_, title, info_url])
+    debug_info(args, info)
+    return data_full, data_path
+
+
+def process_scripts_styles_data(args, data_full):
+    data_path = copy.deepcopy(data_full)
+    info = [["ID", "Uniform Resource Locator (URL)"]]
+    for id_, url_full in data_full.items():
+        prefix = f"https://{args.domain}"
+        url_path = remove_prefix(copy.copy(url_full), prefix)
+        data_path[id_] = url_path
+        info_url = url_full
+        if url_full != url_path:
+            info_url = f"{C_GRAY}https://{args.domain}{C_RESET}{url_path}"
+        info.append([id_, info_url])
+    debug_info(args, info)
+    return data_full, data_path
+
+
 def remove_prefix(text, prefix):
     if text.startswith(prefix):
-        return text[len(prefix) :]
+        return text[len(prefix) :]  # noqa: E203
     return text
+
+
+def debug_info(args, info):
+    if not args.debug:
+        return
+    print()
+    print(f"{C_WHITE}### Data{C_RESET}")
+    print()
+    print(list_of_lists_to_md_table(info))
+    print()
+    print(f"{C_WHITE}### Template{C_RESET}")
+    print()
+
+
+def render_write_include(args, type_, file_name, data, write_file=True):
+    template = args.j2env.get_template(file_name)
+    rendered = template.render(data=data).strip()
+    if type_ == "full":
+        message = "- Data includes full CC URLs"
+        directory = "includes_full"
+    elif type_ == "path":
+        message = "- Data includes path-only CC URLs"
+        directory = "includes_path"
+    else:
+        raise ScriptError(
+            f"Invalid type_ argument (must be 'full' or 'path'): {type_}", 1
+        )
+    if args.debug:
+        print(message)
+        print(f"  - Template: templates/{file_name}")
+    include_file = os.path.join(directory, file_name)
+    if write_file:
+        with open(include_file, "w", encoding="utf-8") as file_out:
+            file_out.write(f"{rendered}\n")
+        if args.debug:
+            print(f"  - Written to file: {include_file}")
+    else:
+        return rendered
 
 
 def list_of_lists_to_md_table(rows):
@@ -90,66 +160,6 @@ def list_of_lists_to_md_table(rows):
     lines.insert(1, f"| {' | '.join(formatted)} |")
 
     return "\n".join(lines)
-
-
-def render_write_include(args, file_name, data, write_file=False):
-    template = args.j2env.get_template(file_name)
-    rendered = template.render(data=data).strip()
-    if args.debug:
-        print(f"{C_WHITE}### Template{C_RESET}")
-        print()
-        print(f"- Template: templates/{file_name}")
-    include_file = os.path.join("includes", file_name)
-    if write_file:
-        with open(include_file, "w", encoding="utf-8") as file_out:
-            file_out.write(f"{rendered}\n")
-        if args.debug:
-            print(f"- Written to file: {include_file}")
-    else:
-        return rendered
-
-
-def format_header_footer(args, data, file_name):
-    data_path = copy.deepcopy(data)
-    info = [["ID", "Title", "Uniform Resource Locator (URL)"]]
-    for index, header in enumerate(data):
-        id_ = header["ID"]
-        title = header["title"]
-        url_full = header["url"]
-        prefix = f"https://{args.domain}"
-        url_path = remove_prefix(copy.copy(url_full), prefix)
-        data_path[index]["url"] = url_path
-        info_url = url_full
-        if url_full != url_path:
-            info_url = f"{C_GRAY}https://{args.domain}{C_RESET}{url_path}"
-        info.append([id_, title, info_url])
-    if args.debug:
-        print()
-        print(f"{C_WHITE}### Data{C_RESET}")
-        print()
-        print(list_of_lists_to_md_table(info))
-        print()
-    render_write_include(args, file_name, data_path, write_file=True)
-
-
-def format_scripts_styles(args, data, file_name, write_file=True):
-    data_path = copy.deepcopy(data)
-    info = [["ID", "Uniform Resource Locator (URL)"]]
-    for id_, url_full in data.items():
-        prefix = f"https://{args.domain}"
-        url_path = remove_prefix(copy.copy(url_full), prefix)
-        data_path[id_] = url_path
-        info_url = url_full
-        if url_full != url_path:
-            info_url = f"{C_GRAY}https://{args.domain}{C_RESET}{url_path}"
-        info.append([id_, info_url])
-    if args.debug:
-        print()
-        print(list_of_lists_to_md_table(info))
-        print()
-    rendered = render_write_include(args, file_name, data_path, write_file)
-    if write_file is False:
-        return rendered
 
 
 def setup():
@@ -231,8 +241,8 @@ def request_data(args, end_url, json=True):
         raise ScriptError(f"FAILED to retrieve data due to HTTP {e}", 1)
     except requests.exceptions.ConnectionError:
         raise ScriptError(
-            f"FAILED to retrieve data due to ConnectionError for url:"
-            " {end_url}",
+            "FAILED to retrieve data due to ConnectionError for url:"
+            f" {end_url}",
             1,
         )
     except requests.exceptions.Timeout:
@@ -243,36 +253,51 @@ def request_data(args, end_url, json=True):
 
 
 def prime_style_script_cache(args):
-    # Prime script/style cache
-    __ = request_data(args, f"https://{args.domain}/", json=False)
+    """Prime script/style cache
+    """
+    request_data(args, f"https://{args.domain}/", json=False)
 
 
 def format_ccnavigation_header(args, data):
     debug_function_name(args, sys._getframe(0).f_code.co_name)
-    format_header_footer(args, data, "site-header.html")
+    data_full, data_path = process_header_footer_data(args, data)
+    render_write_include(args, "full", "site-header.html", data_full)
+    render_write_include(args, "path", "site-header.html", data_path)
 
 
 def format_ccnavigation_footer(args, data):
     debug_function_name(args, sys._getframe(0).f_code.co_name)
-    format_header_footer(args, data, "site-footer.html")
+    data_full, data_path = process_header_footer_data(args, data)
+    render_write_include(args, "full", "site-footer.html", data_full)
+    render_write_include(args, "path", "site-footer.html", data_path)
 
 
 def format_cc_wpscripts(args, data):
     debug_function_name(args, sys._getframe(0).f_code.co_name)
-    rendered = format_scripts_styles(
-        args, data, "footer-scripts.html", write_file=False
+    data_full, data_path = process_scripts_styles_data(args, data)
+    rendered = render_write_include(
+        args, "full", "footer-scripts.html", data_full, write_file=False
     )
-    footer_file = os.path.join("includes", "site-footer.html")
+    footer_file = os.path.join("includes_full", "site-footer.html")
     with open(footer_file, "a", encoding="utf-8") as file_out:
         file_out.write(f"{rendered}\n")
     if args.debug:
-        print(f"- Appended to file: {footer_file}")
-
+        print(f"  - Appended to file: {footer_file}")
+    render_write_include(
+        args, "path", "footer-scripts.html", data_path, write_file=False
+    )
+    footer_file = os.path.join("includes_path", "site-footer.html")
+    with open(footer_file, "a", encoding="utf-8") as file_out:
+        file_out.write(f"{rendered}\n")
+    if args.debug:
+        print(f"  - Appended to file: {footer_file}")
 
 
 def format_cc_wpstyles(args, data):
     debug_function_name(args, sys._getframe(0).f_code.co_name)
-    format_scripts_styles(args, data, "html-head.html")
+    data_full, data_path = process_scripts_styles_data(args, data)
+    render_write_include(args, "full", "html-head.html", data_full)
+    render_write_include(args, "path", "html-head.html", data_path)
 
 
 def main():
@@ -285,6 +310,9 @@ def main():
         format_function = f"format_{endpoint.split('/')[2].replace('-', '_')}"
         data = request_data(args, end_url)
         globals()[format_function](args, data)
+    if args.debug:
+        print()
+        print()
 
 
 if __name__ == "__main__":
