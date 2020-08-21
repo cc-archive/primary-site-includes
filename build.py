@@ -257,7 +257,7 @@ def format_cc_wpscripts(args, data):
 def format_cc_wpstyles(args, data):
     if args.debug:
         print("###", sys._getframe(0).f_code.co_name)
-    format_scripts_styles(args, data, "meta-styles.html")
+    format_scripts_styles(args, data, "html-head.html")
 
 
 def main():
