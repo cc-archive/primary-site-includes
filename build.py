@@ -23,6 +23,7 @@ import requests
 colorama.init()
 C_GRAY = f"{colorama.Style.DIM}{colorama.Fore.WHITE}"
 C_RESET = colorama.Style.RESET_ALL
+C_WHITE = f"{colorama.Style.BRIGHT}{colorama.Fore.WHITE}"
 DOMAINS = {
     "prod": "creativecommons.org",
     "stage": "stage.creativecommons.org",
@@ -41,6 +42,13 @@ class ScriptError(Exception):
         self.code = code if code else 1
         message = "({}) {}".format(self.code, message)
         super(ScriptError, self).__init__(message)
+
+
+def debug_function_name(args, name):
+    if args.debug:
+        print()
+        print()
+        print(f"{C_WHITE}## {name}{C_RESET}")
 
 
 def remove_prefix(text, prefix):
@@ -62,7 +70,7 @@ def list_of_lists_to_md_table(rows):
     lines = []
     widths = [max(map(len, map(str, col))) for col in zip(*rows)]
 
-    for row in rows:
+    for r, row in enumerate(rows):
         formatted = []
         last_col = len(row) - 1
         for i, col in enumerate(row):
@@ -87,10 +95,16 @@ def list_of_lists_to_md_table(rows):
 def render_write_include(args, file_name, data, write_file=False):
     template = args.j2env.get_template(file_name)
     rendered = template.render(data=data).strip()
+    if args.debug:
+        print(f"{C_WHITE}### Template{C_RESET}")
+        print()
+        print(f"- Template: templates/{file_name}")
     include_file = os.path.join("includes", file_name)
     if write_file:
         with open(include_file, "w", encoding="utf-8") as file_out:
             file_out.write(f"{rendered}\n")
+        if args.debug:
+            print(f"- Written to file: {include_file}")
     else:
         return rendered
 
@@ -110,6 +124,8 @@ def format_header_footer(args, data, file_name):
             info_url = f"{C_GRAY}https://{args.domain}{C_RESET}{url_path}"
         info.append([id_, title, info_url])
     if args.debug:
+        print()
+        print(f"{C_WHITE}### Data{C_RESET}")
         print()
         print(list_of_lists_to_md_table(info))
         print()
@@ -232,31 +248,30 @@ def prime_style_script_cache(args):
 
 
 def format_ccnavigation_header(args, data):
-    if args.debug:
-        print("###", sys._getframe(0).f_code.co_name)
+    debug_function_name(args, sys._getframe(0).f_code.co_name)
     format_header_footer(args, data, "site-header.html")
 
 
 def format_ccnavigation_footer(args, data):
-    if args.debug:
-        print("###", sys._getframe(0).f_code.co_name)
+    debug_function_name(args, sys._getframe(0).f_code.co_name)
     format_header_footer(args, data, "site-footer.html")
 
 
 def format_cc_wpscripts(args, data):
-    if args.debug:
-        print("###", sys._getframe(0).f_code.co_name)
+    debug_function_name(args, sys._getframe(0).f_code.co_name)
     rendered = format_scripts_styles(
         args, data, "footer-scripts.html", write_file=False
     )
     footer_file = os.path.join("includes", "site-footer.html")
     with open(footer_file, "a", encoding="utf-8") as file_out:
         file_out.write(f"{rendered}\n")
+    if args.debug:
+        print(f"- Appended to file: {footer_file}")
+
 
 
 def format_cc_wpstyles(args, data):
-    if args.debug:
-        print("###", sys._getframe(0).f_code.co_name)
+    debug_function_name(args, sys._getframe(0).f_code.co_name)
     format_scripts_styles(args, data, "html-head.html")
 
 
