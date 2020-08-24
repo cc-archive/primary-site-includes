@@ -33,7 +33,7 @@ ENDPOINTS = [
     "/wp-json/cc-wpscripts/get",
     "/wp-json/cc-wpstyles/get",
 ]
-REQUESTS_TIMEOUT = 3
+REQUESTS_TIMEOUT = 5
 
 
 class ScriptError(Exception):
