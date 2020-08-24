@@ -97,11 +97,7 @@ def debug_info(args, info):
     if not args.debug:
         return
     print()
-    print(f"{C_WHITE}### Data{C_RESET}")
-    print()
     print(list_of_lists_to_md_table(info))
-    print()
-    print(f"{C_WHITE}### Template{C_RESET}")
     print()
 
 
