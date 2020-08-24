@@ -1,4 +1,9 @@
 {# vim: expandtab shiftwidth=2 tabstop=2 -#}
+{% set PREFIX = data["prefix"] -%}
+<!-- remove following line once it is added to endpoint -->
+<script id="jquery-js" src="{{ PREFIX }}/wp-includes/js/jquery/jquery.js?ver=1.12.4-wp" type="text/javascript"></script>
+<!-- cc-wpscripts-start: Scripts from /wp-json/cc-wpscripts/get endpoint -->
 {% for id_, url in data["json"].items() -%}
-<script type="text/javascript" src="{{ url }}" id="{{ id_ }}"></script>
+<script id="{{ id_ }}" src="{{ url }}" type="text/javascript"></script>
 {% endfor -%}
+<!-- cc-wpscripts-end -->

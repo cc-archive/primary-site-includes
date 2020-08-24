@@ -17,9 +17,11 @@
       </div>
       <div class="navbar-menu">
         <div id="primary-menu" class="navbar-end">
-        {%- for header in data %}
+        <!-- ccnavigation-header-start: items /wp-json/ccnavigation-header/menu endpoint -->
+        {%- for header in data["json"] %}
           <a class='navbar-item {{ header["ID"] }} menu-item menu-item-type-post_type menu-item-object-page menu-item-{{ header["ID"] }}' href='{{ header["url"] }}'>{{ header["title"] }}</a>
         {%- endfor %}
+        <!-- ccnavigation-header-end -->
         </div>
       </div>
     </nav>

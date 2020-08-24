@@ -29,11 +29,13 @@
       <div class="column is-half">
         <nav class="footer-navigation">
           <ul id="menu-footer-links" class="menu">
+          <!-- ccnavigation-footer-start: items /wp-json/ccnavigation-footer/menu endpoint -->
           {%- for header in data["json"] %}
           <li id="menu-item-{{ header["ID"] }}" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-{{ header["ID"] }}">
             <a href="{{ header["url"] }}" class="menu-item">{{ header["title"] }}</a>
             </li>
           {%- endfor %}
+          <!-- ccnavigation-footer-end -->
           </ul>
         </nav>
         <div class="subscription">
