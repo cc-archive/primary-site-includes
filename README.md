@@ -24,13 +24,9 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## WordPress REST API Endpoints
 
-The following endpoints are defined in `creativecommons/wp-theme-creativecommons.org`: [`inc/filters.php`][filtersphp]:
-- `/wp-json/ccnavigation-header/menu`
-- `/wp-json/ccnavigation-footer/menu`
-- `/wp-json/cc-wpscripts/get`
-- `/wp-json/cc-wpstyles/get`
+See creativecommons/wp-theme-creativecommons.org: [API Endpoints][themereadme].
 
-[filtersphp]: https://github.com/creativecommons/wp-theme-creativecommons.org/blob/master/inc/filters.php
+[themereadme]: https://github.com/creativecommons/wp-theme-creativecommons.org#api-endpoints
 
 
 ## Dependencies
