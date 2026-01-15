@@ -24,9 +24,9 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## WordPress REST API Endpoints
 
-See creativecommons/wp-theme-creativecommons.org: [API Endpoints][themereadme].
+See cc-archive/wp-theme-creativecommons.org: [API Endpoints][themereadme].
 
-[themereadme]: https://github.com/creativecommons/wp-theme-creativecommons.org#api-endpoints
+[themereadme]: https://github.com/cc-archive/wp-theme-creativecommons.org#api-endpoints
 
 
 ## Dependencies
